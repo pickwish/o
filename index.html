@@ -2,104 +2,248 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<title>Sabka Bazaar</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>PickWise – Best Product Picks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fafaf7;--surface:#fff;--text:#1c1c1a;--muted:#6b6b66;--line:#e6e4dc;--accent:#0f766e;--accent-text:#fff;--badge:#fef3c7;--badge-text:#92400e;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131413;--surface:#1c1d1c;--text:#f1f0ea;--muted:#a3a29a;--line:#2e2f2d;--accent:#2dd4bf;--accent-text:#052e2b;--badge:#3b2f0b;--badge-text:#fcd34d;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#131413;--surface:#1c1d1c;--text:#f1f0ea;--muted:#a3a29a;--line:#2e2f2d;--accent:#2dd4bf;--accent-text:#052e2b;--badge:#3b2f0b;--badge-text:#fcd34d;color-scheme:dark}
+:root{--bg:#f7f5fb;--surface:#fff;--ink:#1d1b3a;--mute:#6a6786;--line:#e0dcee;--brand:#2b2d8f;--on-brand:#fff;--pop:#f2a900;--pop-ink:#2a1d00;--bad:#c2255c;--ok:#1b7f4b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13122a;--surface:#1d1c3b;--ink:#efedff;--mute:#a09dc0;--line:#34325c;--brand:#8c8fff;--on-brand:#13122a;--bad:#ff7aa8;--ok:#5fd394;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13122a;--surface:#1d1c3b;--ink:#efedff;--mute:#a09dc0;--line:#34325c;--brand:#8c8fff;--on-brand:#13122a;--bad:#ff7aa8;--ok:#5fd394;color-scheme:dark}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
-.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
-header{border-bottom:1px solid var(--line);background:var(--surface)}
-.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
-.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em}.logo span{color:var(--accent)}
-.hero{padding:40px 0 24px;text-align:center}
-.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);margin:0 0 10px;letter-spacing:-.03em;line-height:1.15}
-.hero p{color:var(--muted);margin:0 auto 20px;max-width:560px}
-input[type=search],input[type=email]{width:100%;max-width:420px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem}
-.bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 8px}
-.chip{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:999px;cursor:pointer;font-size:.9rem}
-.chip.on{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
-.tools{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px;color:var(--muted);font-size:.9rem;gap:10px;flex-wrap:wrap}
-select{padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding-bottom:40px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
-.pic{height:130px;display:flex;align-items:center;justify-content:center;font-size:3.6rem;background:var(--bg)}
-.body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
-.badge{align-self:flex-start;background:var(--badge);color:var(--badge-text);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px}
-.card h3{margin:0;font-size:1rem}
-.card p{margin:0;color:var(--muted);font-size:.88rem;flex:1}
-.meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
-.btn{display:block;text-align:center;background:var(--accent);color:var(--accent-text);text-decoration:none;font-weight:700;padding:10px;border-radius:10px;margin-top:6px}
-.btn:hover{opacity:.9}
-.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
-.news{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center;margin-bottom:40px}
-.news h2{margin:0 0 6px}.news form,.news .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
-.news button{padding:12px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-text);font-weight:700;cursor:pointer}
-footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:.82rem;text-align:center}
-.theme{background:none;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Baloo 2","DM Sans",system-ui,sans-serif;margin:0;line-height:1.15}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--brand);color:var(--on-brand);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:26px;font-weight:800;margin-right:auto}
+.btn{border:0;border-radius:10px;padding:9px 16px;font-weight:700;background:var(--pop);color:var(--pop-ink)}
+.btn.alt{background:transparent;border:2px solid currentColor;color:inherit}
+.btn.bad{background:transparent;color:var(--bad);border:2px solid var(--bad);padding:5px 10px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.who{font-size:14px;opacity:.9}
+main{max-width:1060px;margin:0 auto;padding:18px 16px 60px}
+.hero{padding:22px 0 8px}
+.hero h2{font-size:clamp(30px,6vw,52px);font-weight:800}
+.hero p{color:var(--mute);max-width:52ch;margin:8px 0 0}
+nav.tabs{display:flex;gap:6px;margin:18px 0;border-bottom:2px solid var(--line);overflow-x:auto}
+nav.tabs button{background:none;border:0;padding:10px 14px;font-weight:700;color:var(--mute);border-bottom:4px solid transparent;margin-bottom:-2px;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--pop)}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.bar input,.bar select,dialog input,dialog select,dialog textarea{background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:9px 12px;width:100%}
+.bar input{flex:1 1 220px;width:auto}.bar select{flex:0 0 auto;width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.card{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{height:120px;display:grid;place-items:center;font-size:56px;background:var(--line)}
+.card .in{padding:12px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card h3{font-size:19px;font-weight:600}
+.price{font-weight:700;font-size:20px;color:var(--brand)}
+.meta{font-size:13px;color:var(--mute)}
+.card .btn{margin-top:auto}
+.row{background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.row .grow{flex:1 1 200px}
+.tag{font-size:12px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--line)}
+.empty{padding:40px 10px;text-align:center;color:var(--mute)}
+.notice{background:var(--surface);border:1.5px dashed var(--pop);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:14px}
+dialog{border:0;border-radius:16px;padding:20px;width:min(460px,92vw);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(10,8,30,.55)}
+dialog h2{font-size:24px;margin-bottom:12px}
+label{display:block;font-size:14px;font-weight:700;margin:10px 0 4px}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:30px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
+#toast.on{opacity:1}
+@media(prefers-reduced-motion:reduce){#toast{transition:none}}
 </style>
 </head>
 <body>
-<header><div class="wrap nav"><div class="logo">Pick<span>Wise</span></div><button class="theme" id="theme" aria-label="Toggle theme">◐</button></div></header>
-
-<main class="wrap">
-<section class="hero">
-<h1>Honest picks, handpicked deals</h1>
-<p>We research the best products so you don’t have to. Compare, click, and buy from trusted retailers.</p>
-<input type="search" id="q" placeholder="Search products…" aria-label="Search products">
-<div class="bar" id="cats"></div>
-</section>
-<div class="tools"><span id="count"></span>
-<label>Sort: <select id="sort"><option value="pick">Our picks</option><option value="rating">Top rated</option><option value="name">A–Z</option></select></label></div>
-<div class="grid" id="grid"></div>
-
-<section class="news"><h2>Get weekly deal alerts</h2><p style="color:var(--muted);margin:0">Best offers in your inbox, every Friday.</p>
-<div class="row"><input type="email" id="em" placeholder="you@example.com" aria-label="Email"><button id="sub">Subscribe</button></div>
-<p id="msg" style="margin:10px 0 0;color:var(--accent)"></p></section>
+<header>
+  <h1>Sabka Bazaar</h1>
+  <span class="who" id="who"></span>
+  <button class="btn alt" id="bAuth">Login / Sign up</button>
+  <button class="btn alt" id="bSell">Seller account</button>
+  <button class="btn" id="bCart">Cart (0)</button>
+</header>
+<main>
+  <section class="hero">
+    <h2>Everyone sells here. Everyone buys here.</h2>
+    <p>List your old or new items for sale, or buy from other people. Every user is both a seller and a buyer.</p>
+  </section>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-tab="shop" aria-selected="true">Marketplace</button>
+    <button role="tab" data-tab="mine" aria-selected="false">My shop</button>
+    <button role="tab" data-tab="buys" aria-selected="false">My purchases</button>
+  </nav>
+  <div id="view"></div>
 </main>
 
-<footer><div class="wrap"><strong>Affiliate disclosure:</strong> PickWise earns a commission when you buy through links on this site, at no extra cost to you. Prices and availability are set by the retailer.<br>© 2026 PickWise. All rights reserved.</div></footer>
+<dialog id="dAuth"><h2>Login / Sign up</h2>
+  <p class="meta" id="aMsg"></p>
+  <div id="aForm">
+  <label for="aN">Your name</label><input id="aN" maxlength="40">
+  <label for="aS">Shop name</label><input id="aS" maxlength="40" placeholder="e.g. Rohit Traders">
+  <label for="aC">City</label><input id="aC" maxlength="40">
+  </div>
+  <div class="acts"><button class="btn alt" data-close style="color:var(--ink)">Cancel</button><button class="btn" id="aOk">Log in</button></div></dialog>
+
+<dialog id="dSell"><h2>List a new item</h2>
+  <label for="sT">Item name</label><input id="sT" maxlength="60">
+  <label for="sP">Price (₹)</label><input id="sP" type="number" min="1" inputmode="numeric">
+  <label for="sQ">Quantity</label><input id="sQ" type="number" min="1" value="1">
+  <label for="sC">Category</label><select id="sC"></select>
+  <label for="sD">Description</label><textarea id="sD" rows="3" maxlength="300"></textarea>
+  <div class="acts"><button class="btn alt" data-close style="color:var(--ink)">Cancel</button><button class="btn" id="sOk">Publish listing</button></div></dialog>
+
+<dialog id="dCart"><h2>Your cart</h2><div id="cartBody"></div>
+  <label for="addr">Delivery address</label><textarea id="addr" rows="2" maxlength="200"></textarea>
+  <div class="acts"><button class="btn alt" data-close style="color:var(--ink)">Close</button><button class="btn" id="order">Place order</button></div></dialog>
+<div id="toast" role="status"></div>
 
 <script>
-/* ===== EDIT ME: your affiliate settings ===== */
-const AFFILIATE_TAG = "yourtag-21"; // e.g. your Amazon Associates tag
-const buildLink = p => p.url || ("https://www.amazon.in/s?k=" + encodeURIComponent(p.search) + "&tag=" + AFFILIATE_TAG);
-/* Add products here. Use `url` for any custom affiliate link (Flipkart, Impact, etc.) */
-const PRODUCTS = [
- {name:"Wireless Earbuds Pro",cat:"Audio",emoji:"🎧",rating:4.6,badge:"Top pick",desc:"Active noise cancelling and all-day battery for commutes.",search:"wireless earbuds noise cancelling"},
- {name:"Smart Fitness Band",cat:"Wearables",emoji:"⌚",rating:4.4,badge:"Best value",desc:"Heart-rate, sleep tracking and a bright AMOLED display.",search:"fitness band amoled"},
- {name:"Mechanical Keyboard",cat:"Computing",emoji:"⌨️",rating:4.5,desc:"Hot-swappable switches and a compact layout for desk setups.",search:"mechanical keyboard hot swappable"},
- {name:"Portable Power Bank 20000mAh",cat:"Mobile",emoji:"🔋",rating:4.3,desc:"Fast charging for phones and tablets on the go.",search:"power bank 20000mah fast charging"},
- {name:"Ergonomic Office Chair",cat:"Home Office",emoji:"🪑",rating:4.2,badge:"Editor’s choice",desc:"Lumbar support for long work-from-home days.",search:"ergonomic office chair"},
- {name:"4K Action Camera",cat:"Computing",emoji:"📷",rating:4.1,desc:"Waterproof and stabilised, great for travel vlogs.",search:"4k action camera"},
- {name:"Bluetooth Speaker",cat:"Audio",emoji:"🔊",rating:4.5,desc:"Punchy bass, splash-proof, 12-hour playtime.",search:"bluetooth speaker waterproof"},
- {name:"LED Desk Lamp",cat:"Home Office",emoji:"💡",rating:4.4,desc:"Adjustable brightness and colour temperature, eye-care design.",search:"led desk lamp"},
- {name:"Smartwatch with Calling",cat:"Wearables",emoji:"⌚",rating:4.0,desc:"Take calls from your wrist, with 100+ sports modes.",search:"smartwatch bluetooth calling"},
- {name:"Wireless Mouse",cat:"Computing",emoji:"🖱️",rating:4.6,badge:"Best seller",desc:"Silent clicks and multi-device pairing.",search:"wireless mouse silent"},
- {name:"Phone Tripod Stand",cat:"Mobile",emoji:"📱",rating:4.3,desc:"Flexible tripod with remote shutter for reels and photos.",search:"phone tripod stand remote"},
- {name:"Noise Cancelling Headphones",cat:"Audio",emoji:"🎧",rating:4.7,badge:"Top pick",desc:"Over-ear comfort with 40-hour battery life.",search:"over ear noise cancelling headphones"}
-];
-let cat="All";
-const $=id=>document.getElementById(id);
-const cats=["All",...new Set(PRODUCTS.map(p=>p.cat))];
-function drawCats(){$("cats").innerHTML=cats.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("")}
-function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function draw(){
- const q=$("q").value.trim().toLowerCase(),s=$("sort").value;
- let L=PRODUCTS.filter(p=>(cat==="All"||p.cat===cat)&&(p.name+p.desc+p.cat).toLowerCase().includes(q));
- if(s==="rating")L.sort((a,b)=>b.rating-a.rating);else if(s==="name")L.sort((a,b)=>a.name.localeCompare(b.name));
- $("count").textContent=L.length+" product"+(L.length===1?"":"s");
- $("grid").innerHTML=L.length?L.map(p=>`<article class="card"><div class="pic">${p.emoji}</div><div class="body">${p.badge?`<span class="badge">${esc(p.badge)}</span>`:""}<h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p><div class="meta"><span>${"★".repeat(Math.round(p.rating))} ${p.rating}</span><span>${esc(p.cat)}</span></div><a class="btn" href="${buildLink(p)}" target="_blank" rel="sponsored noopener nofollow">Check price →</a></div></article>`).join(""):'<div class="empty">No products match your search.</div>';
+const CATS={"Electronics":"📱","Clothing":"👕","Home":"🛋️","Books":"📚","Vehicles":"🛵","Sports":"🏏","Other":"🎁"};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rs=n=>"₹"+Number(n).toLocaleString("en-IN");
+let db=null,me={id:"guest-"+Math.random().toString(36).slice(2,8),name:""};
+let products=[],orders=[],cart={},tab="shop",q="",cat="";
+const safe=(f,d)=>{try{return f()}catch(e){return d}};
+me.profile=safe(()=>JSON.parse(localStorage.getItem("sb_profile")||"null"),null);
+me.in=!!me.profile&&safe(()=>localStorage.getItem("sb_in")==="1",false);
+me.name=me.in?(me.profile.shop||me.profile.name):"";
+let pending=null;
+cart=safe(()=>JSON.parse(localStorage.getItem("sb_cart")||"{}"),{})||{};
+const saveCart=()=>safe(()=>localStorage.setItem("sb_cart",JSON.stringify(cart)));
+function toast(t){const e=$("#toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("on"),2400)}
+$("#sC").innerHTML=Object.keys(CATS).map(c=>`<option>${c}</option>`).join("");
+
+async function init(){
+  render();
+  try{
+    const user=await claude.use("user");
+    if(user){const id=await user.id();if(id)me.id=id}
+    db=await claude.use("db");
+  }catch(e){db=null}
+  if(!db){render();return}
+  try{const sd=await db.collection("sellers").doc(me.id).get();
+    if(sd.exists){me.profile=sd.data();safe(()=>localStorage.setItem("sb_profile",JSON.stringify(me.profile)))}
+    else{me.profile=null;me.in=false}}catch(e){}
+  me.name=me.in&&me.profile?(me.profile.shop||me.profile.name):"";render();
+  let got=false;const t=setTimeout(()=>{if(!got){db=null;render()}},10000);
+  db.collection("products").onSnapshot(s=>{got=true;clearTimeout(t);products=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
+  db.collection("orders").onSnapshot(s=>{orders=s.docs.map(d=>({id:d.id,...d.data()}));render()},()=>{});
 }
-$("cats").onclick=e=>{const c=e.target.dataset.c;if(c){cat=c;drawCats();draw()}};
-$("q").oninput=draw;$("sort").onchange=draw;
-$("sub").onclick=()=>{const v=$("em").value;$("msg").textContent=/^\S+@\S+\.\S+$/.test(v)?"Thanks for subscribing! (Connect this to your email tool.)":"Please enter a valid email.";};
-$("theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"};
-drawCats();draw();
+const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+async function put(col,id,data){
+  if(db){await db.collection(col).doc(id).set(data)}
+  else{const arr=col==="products"?products:orders;const i=arr.findIndex(x=>x.id===id);const o={id,...data};i>=0?arr[i]=o:arr.push(o);render()}
+}
+async function patch(col,id,data){
+  if(db){await db.collection(col).doc(id).update(data)}
+  else{const o=(col==="products"?products:orders).find(x=>x.id===id);if(o)Object.assign(o,data);render()}
+}
+async function del(col,id){
+  if(db){await db.collection(col).doc(id).delete()}
+  else{const arr=col==="products"?products:orders;const i=arr.findIndex(x=>x.id===id);if(i>=0)arr.splice(i,1);render()}
+}
+function needName(then){
+  if(me.in&&me.profile){then();return}
+  pending=then;openAuth();
+}
+function openAuth(){
+  const has=!!me.profile;
+  $("#aMsg").textContent=has?"We found your seller account: "+(me.profile.shop||me.profile.name)+". Log in to continue.":"Create a new account. It will be linked to your claude.ai account.";
+  $("#aForm").style.display=has?"none":"block";
+  $("#aOk").textContent=has?"Log in":"Sign up";
+  $("#dAuth").showModal();
+}
+$("#bAuth").onclick=()=>{
+  if(me.in){me.in=false;me.name="";safe(()=>localStorage.setItem("sb_in","0"));tab="shop";render();toast("Logged out");return}
+  pending=null;openAuth();
+};
+$("#aOk").onclick=async()=>{
+  if(!me.profile){
+    const p={name:$("#aN").value.trim(),shop:$("#aS").value.trim(),city:$("#aC").value.trim(),ts:Date.now()};
+    if(!p.name||!p.shop||!p.city){toast("Enter your name, shop name and city");return}
+    try{if(db)await db.collection("sellers").doc(me.id).set(p);me.profile=p;safe(()=>localStorage.setItem("sb_profile",JSON.stringify(p)))}
+    catch(err){toast("Sign up failed. Please try again.");return}
+  }
+  me.in=true;safe(()=>localStorage.setItem("sb_in","1"));
+  me.name=me.profile.shop||me.profile.name;
+  $("#dAuth").close();render();toast("Logged in");
+  const f=pending;pending=null;if(f)f();
+};
+function render(){
+  $("#who").textContent=me.in?"Hello, "+me.name:"";
+  $("#bAuth").textContent=me.in?"Logout":"Login / Sign up";
+  const n=Object.values(cart).reduce((a,b)=>a+b,0);$("#bCart").textContent=`Cart (${n})`;
+  document.querySelectorAll("[data-tab]").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===tab));
+  const v=$("#view");
+  const note=!db?`<div class="notice">Demo mode: anything you add is visible only on this page. Share the page with signed-in viewers so everyone sees the same listings.</div>`:"";
+  if(tab==="shop")v.innerHTML=note+shop();
+  else if(tab==="mine")v.innerHTML=note+mine();
+  else v.innerHTML=note+buys();
+  const s=$("#q");if(s&&q){s.focus();s.setSelectionRange(q.length,q.length)}
+}
+function shop(){
+  const list=products.filter(p=>(p.qty>0)&&(!cat||p.cat===cat)&&(!q||(p.title+" "+p.desc).toLowerCase().includes(q.toLowerCase())));
+  const opts=`<option value="">All categories</option>`+Object.keys(CATS).map(c=>`<option${c===cat?" selected":""}>${c}</option>`).join("");
+  const bar=`<div class="bar"><input id="q" type="search" placeholder="Search items" value="${esc(q)}" aria-label="Search"><select id="cf" aria-label="Category">${opts}</select></div>`;
+  if(!list.length)return bar+`<div class="empty">No items found yet. Be the first to list something.</div>`;
+  return bar+`<div class="grid">`+list.map(p=>`<article class="card"><div class="thumb" aria-hidden="true">${CATS[p.cat]||"🎁"}</div><div class="in"><h3>${esc(p.title)}</h3><div class="price">${rs(p.price)}</div><div class="meta">${esc(p.cat)}, ${p.qty} left</div><div class="meta">Seller: ${esc(p.sellerName)}</div><p class="meta" style="margin:4px 0">${esc(p.desc)}</p>${p.sellerId===me.id?`<button class="btn" disabled>Your listing</button>`:`<button class="btn" data-act="add" data-id="${p.id}">Add to cart</button>`}</div></article>`).join("")+`</div>`;
+}
+function mine(){
+  const my=products.filter(p=>p.sellerId===me.id),got=orders.filter(o=>o.sellerId===me.id).sort((a,b)=>b.ts-a.ts);
+  let h=`<h2>My listings</h2><div style="margin:10px 0 24px">`;
+  h+=my.length?my.map(p=>`<div class="row"><div class="grow"><strong>${esc(p.title)}</strong><div class="meta">${rs(p.price)}, ${p.qty} left</div></div><button class="btn bad" data-act="del" data-id="${p.id}">Remove</button></div>`).join(""):`<div class="empty">You haven’t listed anything yet. Tap “Seller account” above.</div>`;
+  h+=`</div><h2>Orders received</h2><div style="margin-top:10px">`;
+  h+=got.length?got.map(o=>`<div class="row"><div class="grow"><strong>${esc(o.title)}</strong> × ${o.qty}<div class="meta">Ordered by ${esc(o.buyerName)}, ${rs(o.price*o.qty)}</div><div class="meta">Address: ${esc(o.address)}</div></div><span class="tag">${esc(o.status)}</span>${(o.status==="new"||o.status==="naya")?`<button class="btn" data-act="ship" data-id="${o.id}">Mark as shipped</button>`:""}</div>`).join(""):`<div class="empty">No orders yet.</div>`;
+  return h+`</div>`;
+}
+function buys(){
+  const my=orders.filter(o=>o.buyerId===me.id).sort((a,b)=>b.ts-a.ts);
+  return `<h2>My purchases</h2><div style="margin-top:10px">`+(my.length?my.map(o=>`<div class="row"><div class="grow"><strong>${esc(o.title)}</strong> × ${o.qty}<div class="meta">Seller: ${esc(o.sellerName)}, ${rs(o.price*o.qty)}</div></div><span class="tag">${esc(o.status)}</span></div>`).join(""):`<div class="empty">You haven’t bought anything yet. Browse the marketplace.</div>`)+`</div>`;
+}
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("[data-tab],[data-act],[data-close]");if(!t)return;
+  if(t.dataset.tab){tab=t.dataset.tab;render();return}
+  if(t.hasAttribute("data-close")){t.closest("dialog").close();return}
+  const id=t.dataset.id,a=t.dataset.act;
+  try{
+    if(a==="add"){cart[id]=(cart[id]||0)+1;const p=products.find(x=>x.id===id);if(p&&cart[id]>p.qty)cart[id]=p.qty;saveCart();render();toast("Added to cart")}
+    if(a==="del"){await del("products",id);toast("Listing removed")}
+    if(a==="ship"){await patch("orders",id,{status:"shipped"});toast("Order marked as shipped")}
+    if(a==="rm"){delete cart[id];saveCart();render();cartUI()}
+  }catch(err){toast("That didn’t work. Please try again.")}
+});
+document.addEventListener("input",e=>{if(e.target.id==="q"){q=e.target.value;render()}});
+document.addEventListener("change",e=>{if(e.target.id==="cf"){cat=e.target.value;render()}});
+$("#bSell").onclick=()=>needName(()=>$("#dSell").showModal());
+$("#sOk").onclick=async()=>{
+  const title=$("#sT").value.trim(),price=+$("#sP").value,qty=Math.floor(+$("#sQ").value);
+  if(!title||!(price>0)||!(qty>0)){toast("Enter a name, price and quantity");return}
+  try{await put("products",newId("p"),{title,price,qty,cat:$("#sC").value,desc:$("#sD").value.trim(),sellerId:me.id,sellerName:me.name,ts:Date.now()});
+  $("#dSell").close();["#sT","#sP","#sD"].forEach(s=>$(s).value="");toast("Listing published");tab="mine";render()}catch(err){toast("Couldn’t publish. Please try again.")}
+};
+function cartUI(){
+  const items=Object.entries(cart).map(([id,n])=>({p:products.find(x=>x.id===id),n})).filter(x=>x.p);
+  const tot=items.reduce((a,x)=>a+x.p.price*x.n,0);
+  $("#cartBody").innerHTML=items.length?items.map(x=>`<div class="row"><div class="grow"><strong>${esc(x.p.title)}</strong> × ${x.n}<div class="meta">${rs(x.p.price*x.n)}</div></div><button class="btn bad" data-act="rm" data-id="${x.p.id}">Remove</button></div>`).join("")+`<div class="price">Total: ${rs(tot)}</div><p class="meta">Agree on payment with the seller at delivery.</p>`:`<div class="empty">Your cart is empty.</div>`;
+  $("#order").disabled=!items.length;
+}
+$("#bCart").onclick=()=>needName(()=>{cartUI();$("#dCart").showModal()});
+$("#order").onclick=async()=>{
+  const addr=$("#addr").value.trim();if(!addr){toast("Enter a delivery address");return}
+  const items=Object.entries(cart).map(([id,n])=>({p:products.find(x=>x.id===id),n})).filter(x=>x.p&&x.p.qty>0);
+  try{
+    for(const {p,n} of items){const k=Math.min(n,p.qty);
+      await put("orders",newId("o"),{pid:p.id,title:p.title,price:p.price,qty:k,sellerId:p.sellerId,sellerName:p.sellerName,buyerId:me.id,buyerName:me.name,address:addr,status:"new",ts:Date.now()});
+      await patch("products",p.id,{qty:p.qty-k})}
+    cart={};saveCart();$("#dCart").close();tab="buys";render();toast("Order placed")
+  }catch(err){toast("Order failed. Please try again.")}
+};
+init();
 </script>
 </body>
 </html>
