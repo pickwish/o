@@ -1,1016 +1,551 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  Search, ShoppingCart, User, MapPin, ChevronDown, Star, Heart, 
-  Menu, X, Check, ShieldCheck, Truck, ArrowRight, Trash2, Plus, 
-  Minus, CreditCard, Package, ExternalLink, Sparkles, SlidersHorizontal,
-  Info, Filter, ArrowUpDown
-} from 'lucide-react';
-
-// --- MOCK PRODUCT DATASET ---
-const INITIAL_PRODUCTS = [
-  {
-    id: 'prod-1',
-    title: 'Echo Dot (5th Gen) | Smart speaker with Alexa and Vibrant Sound',
-    category: 'Electronics',
-    price: 49.99,
-    originalPrice: 69.99,
-    rating: 4.7,
-    reviewsCount: 14230,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1543512214-318c7553f230?auto=format&fit=crop&q=80&w=800',
-    description: 'Our best sounding Echo Dot yet – Enjoy an improved audio experience compared to any previous Echo Dot with Alexa for clearer vocals, deeper bass and vibrant sound in any room.',
-    specs: ['Built-in Alexa', 'Motion detection', 'Temperature sensor', 'Privacy controls'],
-    badge: 'Best Seller',
-    inStock: true,
-  },
-  {
-    id: 'prod-2',
-    title: 'Wireless Noise Cancelling Over-Ear Headphones with Mic',
-    category: 'Electronics',
-    price: 198.00,
-    originalPrice: 249.99,
-    rating: 4.8,
-    reviewsCount: 8920,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
-    description: 'Industry-leading noise cancellation technology means you hear every word, note, and tune with incredible clarity, no matter your environment.',
-    specs: ['30-hr Battery Life', 'Touch Sensor Controls', 'Multipoint Connection', 'Speak-to-Chat'],
-    badge: 'Deal of the Day',
-    inStock: true,
-  },
-  {
-    id: 'prod-3',
-    title: 'Ergonomic Mesh Office Chair with Adjustable Lumbar Support',
-    category: 'Home & Kitchen',
-    price: 149.99,
-    originalPrice: 199.99,
-    rating: 4.4,
-    reviewsCount: 3105,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1580481072645-022f9a6d1270?auto=format&fit=crop&q=80&w=800',
-    description: 'Stay comfortable during long work sessions with breathable mesh back support, 3D armrests, and dynamic height adjustment.',
-    specs: ['Breathable Mesh', '3D Armrests', 'Heavy-duty Base', '135° Recline'],
-    badge: 'Save 25%',
-    inStock: true,
-  },
-  {
-    id: 'prod-4',
-    title: 'Minimalist Stainless Steel Insulated Water Bottle - 32oz',
-    category: 'Home & Kitchen',
-    price: 24.95,
-    originalPrice: 34.95,
-    rating: 4.9,
-    reviewsCount: 21500,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=800',
-    description: 'Double-wall vacuum insulation keeps drinks ice cold for 24 hours or piping hot for 12 hours. Sweat-free powder coat finish.',
-    specs: ['18/8 Stainless Steel', 'BPA-Free', 'Leakproof Straw Lid', 'Dishwasher Safe'],
-    badge: 'Top Rated',
-    inStock: true,
-  },
-  {
-    id: 'prod-5',
-    title: 'Classic Denim Trucker Jacket - 100% Organic Cotton',
-    category: 'Fashion',
-    price: 68.50,
-    originalPrice: 89.00,
-    rating: 4.5,
-    reviewsCount: 1840,
-    isPrime: false,
-    image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=800',
-    description: 'A timeless staple for every wardrobe. Crafted from durable organic denim with classic copper hardware and buttoned flap pockets.',
-    specs: ['100% Organic Cotton', 'Standard Fit', 'Machine Washable', 'Iconic Styling'],
-    badge: null,
-    inStock: true,
-  },
-  {
-    id: 'prod-6',
-    title: 'Smart Fitness Watch with Heart Rate & Sleep Tracker',
-    category: 'Electronics',
-    price: 89.99,
-    originalPrice: 119.99,
-    rating: 4.3,
-    reviewsCount: 5410,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800',
-    description: 'Track your daily activities, sleep stages, heart rate metrics, and workout routines with vibrant AMOLED display and 7-day battery life.',
-    specs: ['AMOLED Display', 'Waterproof 50m', 'GPS Tracking', '7-Day Battery'],
-    badge: 'Limited Time',
-    inStock: true,
-  },
-  {
-    id: 'prod-7',
-    title: 'Hardcover Graphic Novel & Collector Artbook Special Edition',
-    category: 'Books',
-    price: 32.00,
-    originalPrice: 45.00,
-    rating: 4.9,
-    reviewsCount: 978,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800',
-    description: 'Deluxe hardcover edition featuring exclusive behind-the-scenes concept art, developer commentary, and high-gloss foil stamping.',
-    specs: ['Hardcover', '320 Pages', 'Collector Edition', 'Full Color Art'],
-    badge: 'Collector Item',
-    inStock: true,
-  },
-  {
-    id: 'prod-8',
-    title: 'Natural Vitamin C & Hyaluronic Acid Facial Serum',
-    category: 'Beauty',
-    price: 19.99,
-    originalPrice: 29.99,
-    rating: 4.6,
-    reviewsCount: 12400,
-    isPrime: true,
-    image: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=800',
-    description: 'Revitalize and brighten skin texture with pure plant extracts, botanical vitamin C, and deep hydration boosting antioxidants.',
-    specs: ['Cruelty-Free', 'Dermatologist Tested', 'Non-Comedogenic', '1.0 fl oz'],
-    badge: 'Popular',
-    inStock: true,
-  }
-];
-
-const CATEGORIES = ['All Departments', 'Electronics', 'Home & Kitchen', 'Fashion', 'Books', 'Beauty'];
-
-const HERO_SLIDES = [
-  {
-    id: 1,
-    title: "Big Savings on Tech & Gadgets",
-    subtitle: "Up to 40% off top headphones, smart speakers & wearables.",
-    buttonText: "Explore Tech Deals",
-    category: "Electronics",
-    bgGradient: "from-amber-600 via-yellow-600 to-amber-700",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 2,
-    title: "Upgrade Your Home Sanctuary",
-    subtitle: "Modern furniture, kitchen essentials & cozy decor for every room.",
-    buttonText: "Shop Home Deals",
-    category: "Home & Kitchen",
-    bgGradient: "from-blue-900 via-indigo-900 to-slate-900",
-    image: "https://images.unsplash.com/photo-1580481072645-022f9a6d1270?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 3,
-    title: "Fresh Looks for the New Season",
-    subtitle: "Discover premium apparel, footwear & accessories.",
-    buttonText: "Shop Fashion",
-    category: "Fashion",
-    bgGradient: "from-emerald-800 via-teal-900 to-slate-900",
-    image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&q=80&w=1000"
-  }
-];
-
-export default function App() {
-  // --- STATE ---
-  const [products] = useState(INITIAL_PRODUCTS);
-  const [selectedCategory, setSelectedCategory] = useState('All Departments');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('featured'); // 'featured', 'price-low', 'price-high', 'rating'
-  const [onlyPrime, setOnlyPrime] = useState(false);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PickWish - Best Online Shopping Store</title>
   
-  const [cart, setCart] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-  const [checkoutStep, setCheckoutStep] = useState(1); // 1: Shipping, 2: Payment, 3: Confirmation
+  <!-- React & ReactDOM CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
   
-  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const [toasts, setToasts] = useState([]);
+  <!-- Babel CDN for compiling React JSX directly in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   
-  const [userLocation] = useState('New York 10001');
+  <!-- Lucide Icons Library -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+    /* Hide scrollbar for category sub-nav */
+    .scrollbar-none::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-none {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans antialiased">
+  <!-- React Mount Point -->
+  <div id="root"></div>
 
-  // --- AUTOMATIC HERO SLIDER ---
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveHeroSlide((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
+  <!-- React Code Executed by Babel -->
+  <script type="text/babel">
+    const { useState, useMemo, useEffect } = React;
 
-  // --- TOAST NOTIFICATIONS ---
-  const addToast = (message) => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message }]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
-    }, 3000);
-  };
-
-  // --- WISHLIST OPERATIONS ---
-  const toggleWishlist = (product, e) => {
-    if (e) e.stopPropagation();
-    setWishlist(prev => {
-      const exists = prev.some(item => item.id === product.id);
-      if (exists) {
-        addToast(`Removed from PickWish List`);
-        return prev.filter(item => item.id !== product.id);
-      } else {
-        addToast(`Added to PickWish List!`);
-        return [...prev, product];
+    // --- SAMPLE PICKWISH PRODUCT DATA ---
+    const INITIAL_PRODUCTS = [
+      {
+        id: 'prod-1',
+        title: 'Echo Dot (5th Gen) | Smart speaker with Alexa and Vibrant Sound',
+        category: 'Electronics',
+        price: 49.99,
+        originalPrice: 69.99,
+        rating: 4.7,
+        reviewsCount: 14230,
+        isPrime: true,
+        image: 'https://images.unsplash.com/photo-1543512214-318c7553f230?auto=format&fit=crop&q=80&w=800',
+        description: 'Our best sounding Echo Dot yet – Enjoy an improved audio experience compared to any previous Echo Dot with Alexa for clearer vocals, deeper bass and vibrant sound.',
+        badge: 'Best Seller',
+      },
+      {
+        id: 'prod-2',
+        title: 'Wireless Noise Cancelling Over-Ear Headphones with Mic',
+        category: 'Electronics',
+        price: 198.00,
+        originalPrice: 249.99,
+        rating: 4.8,
+        reviewsCount: 8920,
+        isPrime: true,
+        image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
+        description: 'Industry-leading noise cancellation technology means you hear every word, note, and tune with incredible clarity.',
+        badge: 'Deal of the Day',
+      },
+      {
+        id: 'prod-3',
+        title: 'Ergonomic Mesh Office Chair with Adjustable Lumbar Support',
+        category: 'Home & Kitchen',
+        price: 149.99,
+        originalPrice: 199.99,
+        rating: 4.4,
+        reviewsCount: 3105,
+        isPrime: true,
+        image: 'https://images.unsplash.com/photo-1580481072645-022f9a6d1270?auto=format&fit=crop&q=80&w=800',
+        description: 'Stay comfortable during long work sessions with breathable mesh back support and dynamic height adjustment.',
+        badge: 'Save 25%',
+      },
+      {
+        id: 'prod-4',
+        title: 'Minimalist Stainless Steel Insulated Water Bottle - 32oz',
+        category: 'Home & Kitchen',
+        price: 24.95,
+        originalPrice: 34.95,
+        rating: 4.9,
+        reviewsCount: 21500,
+        isPrime: true,
+        image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&q=80&w=800',
+        description: 'Double-wall vacuum insulation keeps drinks ice cold for 24 hours or piping hot for 12 hours.',
+        badge: 'Top Rated',
+      },
+      {
+        id: 'prod-5',
+        title: 'Classic Denim Trucker Jacket - 100% Organic Cotton',
+        category: 'Fashion',
+        price: 68.50,
+        originalPrice: 89.00,
+        rating: 4.5,
+        reviewsCount: 1840,
+        isPrime: false,
+        image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=800',
+        description: 'A timeless staple for every wardrobe. Crafted from durable organic denim with classic copper hardware.',
+        badge: null,
+      },
+      {
+        id: 'prod-6',
+        title: 'Smart Fitness Watch with Heart Rate & Sleep Tracker',
+        category: 'Electronics',
+        price: 89.99,
+        originalPrice: 119.99,
+        rating: 4.3,
+        reviewsCount: 5410,
+        isPrime: true,
+        image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800',
+        description: 'Track your daily activities, sleep stages, heart rate metrics, and workout routines.',
+        badge: 'Limited Time',
       }
-    });
-  };
+    ];
 
-  // --- CART OPERATIONS ---
-  const addToCart = (product, quantityToAdd = 1) => {
-    setCart(prevCart => {
-      const existing = prevCart.find(item => item.id === product.id);
-      if (existing) {
-        return prevCart.map(item =>
-          item.id === product.id ? { ...item, quantity: item.quantity + quantityToAdd } : item
-        );
-      }
-      return [...prevCart, { ...product, quantity: quantityToAdd }];
-    });
-    addToast(`Added "${product.title.slice(0, 24)}..." to cart`);
-  };
+    const CATEGORIES = ['All Departments', 'Electronics', 'Home & Kitchen', 'Fashion', 'Books', 'Beauty', 'Toys & Games'];
 
-  const updateQuantity = (productId, delta) => {
-    setCart(prevCart => {
-      return prevCart.map(item => {
-        if (item.id === productId) {
-          const newQty = item.quantity + delta;
-          return newQty > 0 ? { ...item, quantity: newQty } : null;
+    function PickWishApp() {
+      // States
+      const [products] = useState(INITIAL_PRODUCTS);
+      const [selectedCategory, setSelectedCategory] = useState('All Departments');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [onlyPrime, setOnlyPrime] = useState(false);
+      
+      const [cart, setCart] = useState([]);
+      const [wishlist, setWishlist] = useState([]);
+      const [isCartOpen, setIsCartOpen] = useState(false);
+      const [isAccountOpen, setIsAccountOpen] = useState(false);
+      const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+      const [userLocation, setUserLocation] = useState('New Delhi 110001');
+      const [toastMsg, setToastMsg] = useState('');
+
+      // Refresh icons on state change
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
         }
-        return item;
-      }).filter(Boolean);
-    });
-  };
+      });
 
-  const removeFromCart = (productId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== productId));
-    addToast('Item removed from cart');
-  };
+      // Show Toast Notification
+      const showToast = (message) => {
+        setToastMsg(message);
+        setTimeout(() => setToastMsg(''), 3000);
+      };
 
-  const cartTotalCount = useMemo(() => {
-    return cart.reduce((sum, item) => sum + item.quantity, 0);
-  }, [cart]);
+      // Add To Cart logic
+      const addToCart = (product) => {
+        setCart(prev => {
+          const existing = prev.find(item => item.id === product.id);
+          if (existing) {
+            return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+          }
+          return [...prev, { ...product, quantity: 1 }];
+        });
+        showToast(`Added "${product.title.slice(0, 20)}..." to your cart!`);
+      };
 
-  const cartSubtotal = useMemo(() => {
-    return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  }, [cart]);
+      // Remove from cart
+      const updateQuantity = (id, delta) => {
+        setCart(prev => prev.map(item => {
+          if (item.id === id) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        }).filter(Boolean));
+      };
 
-  const estimatedTax = cartSubtotal * 0.08;
-  const isFreeShipping = cartSubtotal > 35 || cartSubtotal === 0;
+      // Toggle Wishlist
+      const toggleWishlist = (product) => {
+        setWishlist(prev => {
+          const exists = prev.some(item => item.id === product.id);
+          if (exists) {
+            showToast('Removed item from Wishlist.');
+            return prev.filter(item => item.id !== product.id);
+          } else {
+            showToast('Saved to PickWish List!');
+            return [...prev, product];
+          }
+        });
+      };
 
-  // --- FILTERED & SORTED PRODUCTS ---
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const matchesCategory = selectedCategory === 'All Departments' || product.category === selectedCategory;
-      const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                            product.description.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesPrime = !onlyPrime || product.isPrime;
-      return matchesCategory && matchesSearch && matchesPrime;
-    }).sort((a, b) => {
-      if (sortBy === 'price-low') return a.price - b.price;
-      if (sortBy === 'price-high') return b.price - a.price;
-      if (sortBy === 'rating') return b.rating - a.rating;
-      return 0; // 'featured' default order
-    });
-  }, [products, selectedCategory, searchQuery, onlyPrime, sortBy]);
+      // Computed Values
+      const cartCount = useMemo(() => cart.reduce((sum, item) => sum + item.quantity, 0), [cart]);
+      const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + (item.price * item.quantity), 0), [cart]);
 
-  // --- CHECKOUT LOGIC ---
-  const handleProceedToCheckout = () => {
-    if (cart.length === 0) return;
-    setIsCartOpen(false);
-    setCheckoutStep(1);
-    setIsCheckoutOpen(true);
-  };
+      const filteredProducts = useMemo(() => {
+        return products.filter(p => {
+          const matchesCategory = selectedCategory === 'All Departments' || p.category === selectedCategory;
+          const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesPrime = !onlyPrime || p.isPrime;
+          return matchesCategory && matchesSearch && matchesPrime;
+        });
+      }, [products, selectedCategory, searchQuery, onlyPrime]);
 
-  const handleCompleteOrder = () => {
-    setCheckoutStep(3);
-    setCart([]);
-  };
-
-  return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-900 flex flex-col antialiased">
-      {/* Toast Overlay */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none">
-        {toasts.map(toast => (
-          <div key={toast.id} className="bg-gray-900 text-white px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 animate-fade-in border border-gray-700 pointer-events-auto">
-            <Check className="w-5 h-5 text-green-400 shrink-0" />
-            <span className="text-sm font-medium">{toast.message}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ================= HEADER NAVBAR ================= */}
-      <header className="sticky top-0 z-40 bg-[#131921] text-white select-none">
-        {/* Main Navbar */}
-        <div className="max-w-[1500px] mx-auto px-4 py-2.5 flex items-center gap-4">
+      return (
+        <div className="min-h-screen flex flex-col bg-gray-100">
           
-          {/* PickWish Logo */}
-          <button 
-            onClick={() => { setSelectedCategory('All Departments'); setSearchQuery(''); }}
-            className="flex items-center gap-1 hover:border hover:border-amber-400 p-1.5 rounded transition group"
-          >
-            <span className="text-2xl font-black tracking-tight text-white flex items-center">
-              Pick<span className="text-amber-400 font-black text-2xl group-hover:text-amber-300">Wish</span>
-              <Sparkles className="w-5 h-5 text-amber-400 ml-1 inline-block animate-pulse" />
-            </span>
-          </button>
-
-          {/* Delivery Location */}
-          <div className="hidden lg:flex items-center gap-1 text-xs hover:border hover:border-white p-1.5 rounded cursor-pointer">
-            <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-1" />
-            <div className="flex flex-col">
-              <span className="text-gray-400 leading-tight">Deliver to</span>
-              <span className="font-bold text-white leading-tight">{userLocation}</span>
+          {/* TOAST POPUP */}
+          {toastMsg && (
+            <div className="fixed bottom-6 right-6 z-50 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 border border-gray-700 animate-fade-in text-xs font-semibold">
+              <i data-lucide="check-circle" class="w-4 h-4 text-amber-400"></i>
+              <span>{toastMsg}</span>
             </div>
-          </div>
+          )}
 
-          {/* Search Bar Component */}
-          <div className="flex-1 flex items-center max-w-3xl">
-            <div className="flex w-full rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-amber-500">
-              <select 
-                value={selectedCategory} 
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-gray-200 text-gray-800 text-xs px-2.5 py-2.5 border-r border-gray-300 outline-none cursor-pointer hover:bg-gray-300 font-medium hidden sm:block"
+          {/* ========================================= */}
+          {/* AMAZON-STYLE PICKWISH HEADER */}
+          {/* ========================================= */}
+          <header className="sticky top-0 z-40 bg-[#131921] text-white select-none">
+            
+            {/* Top Bar */}
+            <div className="max-w-[1500px] mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2 sm:gap-4">
+              
+              {/* Logo */}
+              <button 
+                onClick={() => { setSelectedCategory('All Departments'); setSearchQuery(''); }}
+                className="flex items-center gap-1 p-1.5 rounded border border-transparent hover:border-white transition shrink-0"
               >
-                {CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
-
-              <input 
-                type="text" 
-                placeholder="Search PickWish deals & items..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 text-sm text-gray-900 outline-none placeholder-gray-500"
-              />
-
-              <button className="bg-amber-500 hover:bg-amber-600 px-5 text-gray-900 flex items-center justify-center transition">
-                <Search className="w-5 h-5" />
+                <span className="text-2xl font-black tracking-tight text-white">
+                  Pick<span className="text-amber-400">Wish</span>
+                </span>
+                <span className="text-[10px] font-bold text-gray-400 self-start mt-1">.in</span>
               </button>
-            </div>
-          </div>
 
-          {/* Right Header Navigation Items */}
-          <div className="flex items-center gap-3 md:gap-5 ml-auto">
-            {/* Account / Wishlist */}
-            <div 
-              onClick={() => addToast(`PickWish List contains ${wishlist.length} item(s)`)}
-              className="hidden sm:flex flex-col text-xs hover:border hover:border-white p-1.5 rounded cursor-pointer relative"
-            >
-              <span className="text-gray-300 leading-tight">Hello, Sign in</span>
-              <span className="font-bold text-white leading-tight flex items-center gap-1">
-                Account & Wishlist ({wishlist.length}) <ChevronDown className="w-3 h-3 text-gray-400" />
-              </span>
-            </div>
+              {/* Location Picker */}
+              <button 
+                onClick={() => {
+                  const loc = prompt("Enter delivery pincode/city:", userLocation);
+                  if (loc) setUserLocation(loc);
+                }}
+                className="hidden lg:flex items-center gap-1.5 p-1.5 rounded border border-transparent hover:border-white transition text-left shrink-0"
+              >
+                <i data-lucide="map-pin" class="w-4 h-4 text-white mt-1"></i>
+                <div className="flex flex-col text-[11px]">
+                  <span className="text-gray-300 leading-tight">Deliver to</span>
+                  <span className="font-bold text-white leading-tight">{userLocation.split(' ')[0]}</span>
+                </div>
+              </button>
 
-            {/* Orders */}
-            <div className="hidden md:flex flex-col text-xs hover:border hover:border-white p-1.5 rounded cursor-pointer">
-              <span className="text-gray-300 leading-tight">Returns</span>
-              <span className="font-bold text-white leading-tight">& Orders</span>
-            </div>
-
-            {/* Shopping Cart Button */}
-            <button 
-              onClick={() => setIsCartOpen(true)}
-              className="flex items-center hover:border hover:border-white p-1.5 rounded relative text-white transition"
-            >
-              <div className="relative">
-                <ShoppingCart className="w-8 h-8" />
-                <span className="absolute -top-1 right-2 bg-amber-500 text-gray-900 font-bold text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                  {cartTotalCount}
-                </span>
-              </div>
-              <span className="font-bold text-sm hidden sm:inline ml-1 self-end mb-1">Cart</span>
-            </button>
-
-          </div>
-        </div>
-
-        {/* Sub-Navbar Departments */}
-        <div className="bg-[#232f3e] text-xs font-medium px-4 py-1.5 flex items-center gap-4 overflow-x-auto whitespace-nowrap scrollbar-none">
-          <button className="flex items-center gap-1 font-bold hover:text-amber-400 transition">
-            <Menu className="w-4 h-4" /> All
-          </button>
-          {CATEGORIES.slice(1).map(cat => (
-            <button 
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`hover:text-amber-400 transition ${selectedCategory === cat ? 'text-amber-400 font-bold underline underline-offset-4' : 'text-gray-200'}`}
-            >
-              {cat}
-            </button>
-          ))}
-          <span className="text-gray-500">|</span>
-          <button 
-            onClick={() => { setSelectedCategory('All Departments'); setOnlyPrime(prev => !prev); }}
-            className={`hover:text-amber-400 transition flex items-center gap-1 ${onlyPrime ? 'text-cyan-400 font-bold' : 'text-gray-200'}`}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> PickWish Express Deals
-          </button>
-        </div>
-      </header>
-
-      {/* ================= MAIN CONTENT ================= */}
-      <main className="flex-1 max-w-[1500px] w-full mx-auto px-4 pb-12">
-
-        {/* Dynamic Hero Banner Carousel */}
-        {searchQuery === '' && (
-          <div className="relative mt-3 mb-6 rounded-xl overflow-hidden shadow-md">
-            <div className={`w-full py-12 md:py-16 px-6 md:px-12 bg-gradient-to-r ${HERO_SLIDES[activeHeroSlide].bgGradient} text-white transition-all duration-700 ease-in-out flex flex-col md:flex-row items-center justify-between gap-6`}>
-              <div className="max-w-xl space-y-3 z-10">
-                <span className="inline-block bg-amber-500 text-gray-900 font-extrabold text-xs px-2.5 py-1 rounded uppercase tracking-wider">
-                  Featured Promotion
-                </span>
-                <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-                  {HERO_SLIDES[activeHeroSlide].title}
-                </h2>
-                <p className="text-gray-200 text-sm md:text-base">
-                  {HERO_SLIDES[activeHeroSlide].subtitle}
-                </p>
-                <div className="pt-2">
-                  <button 
-                    onClick={() => setSelectedCategory(HERO_SLIDES[activeHeroSlide].category)}
-                    className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold px-6 py-2.5 rounded-lg shadow transition flex items-center gap-2 group"
+              {/* Search Bar */}
+              <div className="flex-1 max-w-3xl flex items-center">
+                <div className="flex w-full rounded-md overflow-hidden bg-white focus-within:ring-2 focus-within:ring-amber-500">
+                  <select 
+                    value={selectedCategory} 
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs px-3 py-2 border-r border-gray-300 outline-none cursor-pointer font-medium hidden sm:block max-w-[140px] truncate"
                   >
-                    {HERO_SLIDES[activeHeroSlide].buttonText}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                  </select>
+
+                  <input 
+                    type="text" 
+                    placeholder="Search PickWish deals, items & categories..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full px-3 py-2 text-sm text-gray-900 outline-none placeholder-gray-500"
+                  />
+
+                  <button className="bg-amber-400 hover:bg-amber-500 text-gray-900 px-4 flex items-center justify-center font-bold transition shrink-0">
+                    <i data-lucide="search" class="w-5 h-5"></i>
                   </button>
                 </div>
               </div>
 
-              {/* Banner Image Preview */}
-              <div className="relative w-full md:w-1/2 h-48 md:h-64 rounded-xl overflow-hidden shadow-2xl border border-white/20 shrink-0">
-                <img 
-                  src={HERO_SLIDES[activeHeroSlide].image} 
-                  alt="Banner Promo" 
-                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
-                />
-              </div>
-            </div>
-
-            {/* Slider Dots */}
-            <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-2">
-              {HERO_SLIDES.map((_, idx) => (
+              {/* Account Dropdown */}
+              <div className="relative">
                 <button 
-                  key={idx}
-                  onClick={() => setActiveHeroSlide(idx)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all ${activeHeroSlide === idx ? 'bg-amber-400 w-6' : 'bg-white/50'}`}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Filter Controls & Search Summary */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span className="font-bold text-gray-800 text-sm flex items-center gap-1.5">
-              <Filter className="w-4 h-4 text-amber-600" /> Filters:
-            </span>
-            <div className="flex flex-wrap gap-2">
-              <button 
-                onClick={() => setOnlyPrime(p => !p)} 
-                className={`text-xs px-3 py-1.5 rounded-full border transition flex items-center gap-1 font-semibold ${
-                  onlyPrime ? 'bg-cyan-50 border-cyan-500 text-cyan-700' : 'bg-gray-50 border-gray-300 text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                <Check className={`w-3 h-3 ${onlyPrime ? 'opacity-100' : 'opacity-0'}`} /> Prime Eligible
-              </button>
-              {selectedCategory !== 'All Departments' && (
-                <span className="text-xs bg-amber-50 border border-amber-300 text-amber-800 px-3 py-1.5 rounded-full flex items-center gap-1 font-semibold">
-                  Category: {selectedCategory}
-                  <X className="w-3.5 h-3.5 cursor-pointer hover:text-amber-900" onClick={() => setSelectedCategory('All Departments')} />
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* Sorting Dropdown */}
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-semibold text-gray-600 flex items-center gap-1">
-              <ArrowUpDown className="w-3.5 h-3.5" /> Sort by:
-            </label>
-            <select 
-              value={sortBy} 
-              onChange={(e) => setSortBy(e.target.value)}
-              className="text-xs bg-gray-50 border border-gray-300 text-gray-800 font-medium py-1.5 px-3 rounded-lg outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer"
-            >
-              <option value="featured">Featured</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-              <option value="rating">Customer Rating</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Results Header */}
-        <div className="mb-4 flex justify-between items-center">
-          <h3 className="text-lg font-bold text-gray-800">
-            {searchQuery ? `Search results for "${searchQuery}"` : selectedCategory}
-            <span className="text-sm font-normal text-gray-500 ml-2">({filteredProducts.length} items)</span>
-          </h3>
-        </div>
-
-        {/* Product Cards Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-lg border border-gray-200 p-12 text-center my-8 shadow-sm">
-            <Info className="w-12 h-12 text-amber-500 mx-auto mb-3" />
-            <h4 className="text-lg font-bold text-gray-800">No products found</h4>
-            <p className="text-gray-500 text-sm mt-1">Try adjusting your filters or search terms.</p>
-            <button 
-              onClick={() => { setSelectedCategory('All Departments'); setSearchQuery(''); setOnlyPrime(false); }}
-              className="mt-4 bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold px-4 py-2 rounded-lg text-sm"
-            >
-              Reset Filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <div 
-                key={product.id}
-                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group relative"
-              >
-                {/* Wishlist Button */}
-                <button 
-                  onClick={(e) => toggleWishlist(product, e)}
-                  className="absolute top-3 right-3 bg-white/80 hover:bg-white p-1.5 rounded-full shadow-md z-10 transition text-gray-600 hover:text-red-500"
-                  title="Save to PickWish Wishlist"
+                  onClick={() => setIsAccountOpen(!isAccountOpen)}
+                  className="flex flex-col text-left p-1.5 rounded border border-transparent hover:border-white transition cursor-pointer"
                 >
-                  <Heart className={`w-4 h-4 ${wishlist.some(w => w.id === product.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                  <span className="text-[11px] text-gray-300 leading-tight">Hello, Sign in</span>
+                  <span className="font-bold text-xs text-white leading-tight flex items-center gap-0.5">
+                    Account & Lists <i data-lucide="chevron-down" class="w-3 h-3 text-gray-400"></i>
+                  </span>
                 </button>
 
-                {/* Badge Overlay */}
-                {product.badge && (
-                  <span className="absolute top-3 left-3 bg-amber-500 text-gray-900 font-bold text-[10px] uppercase px-2 py-0.5 rounded shadow z-10">
-                    {product.badge}
-                  </span>
+                {isAccountOpen && (
+                  <div className="absolute right-0 top-full mt-1 bg-white text-gray-900 rounded-lg shadow-2xl border border-gray-200 p-4 w-64 z-50 text-xs animate-fade-in">
+                    <button className="w-full bg-amber-400 hover:bg-amber-500 font-bold py-1.5 rounded text-xs mb-3 shadow-sm">
+                      Sign In
+                    </button>
+                    <div className="border-t border-gray-100 pt-3">
+                      <h4 className="font-bold text-gray-900 mb-2">Your Lists</h4>
+                      <ul className="space-y-1.5 text-gray-600">
+                        <li className="hover:text-amber-600 cursor-pointer flex justify-between">
+                          <span>Wishlist</span>
+                          <span className="font-bold text-amber-600">{wishlist.length}</span>
+                        </li>
+                        <li className="hover:text-amber-600 cursor-pointer">Saved Shopping Cart</li>
+                      </ul>
+                    </div>
+                  </div>
                 )}
-
-                <div className="p-4 cursor-pointer" onClick={() => setSelectedProduct(product)}>
-                  {/* Product Image */}
-                  <div className="w-full h-52 bg-gray-50 rounded-lg overflow-hidden mb-4 flex items-center justify-center relative group-hover:scale-102 transition duration-300">
-                    <img 
-                      src={product.image} 
-                      alt={product.title} 
-                      className="max-h-full max-w-full object-contain p-2"
-                    />
-                  </div>
-
-                  {/* Title */}
-                  <h4 className="font-semibold text-sm text-gray-900 line-clamp-2 hover:text-amber-600 transition mb-2">
-                    {product.title}
-                  </h4>
-
-                  {/* Ratings */}
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'fill-current' : 'text-gray-300'}`} 
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs font-medium text-cyan-700 hover:underline">
-                      {product.reviewsCount.toLocaleString()}
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-xs align-top text-gray-900">$</span>
-                    <span className="text-2xl font-black text-gray-900 leading-none">
-                      {Math.floor(product.price)}
-                    </span>
-                    <span className="text-xs align-top text-gray-900 font-bold">
-                      {(product.price % 1).toFixed(2).substring(1)}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-xs text-gray-400 line-through ml-1">
-                        ${product.originalPrice.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Prime Delivery Tag */}
-                  {product.isPrime && (
-                    <div className="flex items-center gap-1 text-[11px] font-bold text-cyan-600 mb-3">
-                      <span className="italic font-extrabold text-blue-900 bg-cyan-100 px-1.5 py-0.5 rounded text-[10px]">prime</span>
-                      <span>FREE One-Day Delivery</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Card Action Button */}
-                <div className="px-4 pb-4 pt-0">
-                  <button 
-                    onClick={() => addToCart(product)}
-                    className="w-full bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-gray-900 font-bold py-2 rounded-lg transition shadow-sm flex items-center justify-center gap-2 text-xs"
-                  >
-                    <ShoppingCart className="w-4 h-4" /> Add to Cart
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-
-      {/* ================= PRODUCT DETAIL MODAL ================= */}
-      {selectedProduct && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
-            <button 
-              onClick={() => setSelectedProduct(null)}
-              className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 p-2 rounded-full text-gray-600 transition z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8">
-              {/* Product Image View */}
-              <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-center border border-gray-100">
-                <img 
-                  src={selectedProduct.image} 
-                  alt={selectedProduct.title} 
-                  className="max-h-72 object-contain"
-                />
               </div>
 
-              {/* Specs & Buy Box */}
-              <div className="flex flex-col justify-between space-y-4">
-                <div>
-                  <span className="text-xs font-bold text-amber-600 uppercase tracking-wider">
-                    {selectedProduct.category}
+              {/* Orders */}
+              <button className="hidden sm:flex flex-col text-left p-1.5 rounded border border-transparent hover:border-white transition shrink-0">
+                <span className="text-[11px] text-gray-300 leading-tight">Returns</span>
+                <span className="font-bold text-xs text-white leading-tight">& Orders</span>
+              </button>
+
+              {/* Shopping Cart Button */}
+              <button 
+                onClick={() => setIsCartOpen(true)}
+                className="flex items-center p-1.5 rounded border border-transparent hover:border-white transition relative shrink-0"
+              >
+                <div className="relative">
+                  <i data-lucide="shopping-cart" class="w-7 h-7 text-white"></i>
+                  <span className="absolute -top-1.5 -right-1 bg-amber-500 text-gray-900 font-black text-[11px] px-1.5 py-0.2 rounded-full min-w-[18px] text-center">
+                    {cartCount}
                   </span>
-                  <h2 className="text-xl font-bold text-gray-900 mt-1 leading-snug">
-                    {selectedProduct.title}
-                  </h2>
+                </div>
+                <span className="font-bold text-xs hidden sm:inline ml-2 self-end mb-0.5">Cart</span>
+              </button>
 
-                  {/* Rating */}
-                  <div className="flex items-center gap-2 mt-2">
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-4 h-4 ${i < Math.floor(selectedProduct.rating) ? 'fill-current' : 'text-gray-300'}`} 
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xs font-semibold text-gray-600">
-                      {selectedProduct.rating} out of 5 ({selectedProduct.reviewsCount} ratings)
+            </div>
+
+            {/* Sub Nav Bar */}
+            <div className="bg-[#232f3e] text-xs font-semibold px-3 sm:px-4 py-1.5 flex items-center gap-3 overflow-x-auto scrollbar-none border-t border-gray-800">
+              <button 
+                onClick={() => setIsSideMenuOpen(true)}
+                className="flex items-center gap-1 hover:border hover:border-white px-2 py-1 rounded transition text-white font-bold shrink-0"
+              >
+                <i data-lucide="menu" class="w-4 h-4"></i> All
+              </button>
+
+              {CATEGORIES.slice(1, 5).map(cat => (
+                <button 
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`hover:border hover:border-white px-2 py-1 rounded shrink-0 ${selectedCategory === cat ? 'text-amber-400 font-bold' : 'text-gray-200'}`}
+                >
+                  {cat}
+                </button>
+              ))}
+
+              <span className="text-gray-600">|</span>
+
+              <button 
+                onClick={() => setOnlyPrime(!onlyPrime)}
+                className={`flex items-center gap-1 px-2 py-1 rounded shrink-0 ${onlyPrime ? 'bg-cyan-900 text-cyan-300 font-bold' : 'hover:border hover:border-white text-gray-200'}`}
+              >
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i> Today's PickWish Deals
+              </button>
+            </div>
+          </header>
+
+          {/* ================= SIDE DRAWER ================= */}
+          {isSideMenuOpen && (
+            <div className="fixed inset-0 z-50 bg-black/60 flex animate-fade-in">
+              <div className="bg-white w-72 h-full shadow-2xl flex flex-col justify-between overflow-y-auto">
+                <div>
+                  <div className="bg-[#232f3e] text-white p-4 flex justify-between items-center">
+                    <span className="font-bold text-base flex items-center gap-2">
+                      <i data-lucide="user" class="w-5 h-5 bg-gray-600 rounded-full p-0.5"></i> Hello, Sign in
                     </span>
+                    <button onClick={() => setIsSideMenuOpen(false)} className="text-gray-300 hover:text-white">
+                      <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
                   </div>
 
-                  {/* Pricing */}
-                  <div className="mt-4 flex items-baseline gap-2 border-t border-b border-gray-100 py-3">
-                    <span className="text-3xl font-extrabold text-gray-900">
-                      ${selectedProduct.price.toFixed(2)}
-                    </span>
-                    {selectedProduct.originalPrice && (
-                      <span className="text-sm text-gray-400 line-through">
-                        ${selectedProduct.originalPrice.toFixed(2)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Description */}
-                  <p className="text-xs text-gray-600 mt-3 leading-relaxed">
-                    {selectedProduct.description}
-                  </p>
-
-                  {/* Specs List */}
-                  <div className="mt-4">
-                    <h4 className="text-xs font-bold text-gray-800 uppercase mb-2">Key Highlights</h4>
-                    <ul className="grid grid-cols-2 gap-1.5 text-xs text-gray-600">
-                      {selectedProduct.specs.map((spec, i) => (
-                        <li key={i} className="flex items-center gap-1.5">
-                          <Check className="w-3.5 h-3.5 text-green-600 shrink-0" />
-                          <span>{spec}</span>
+                  <div className="p-4">
+                    <h4 className="font-bold text-gray-900 text-xs uppercase tracking-wider mb-3">Shop By Department</h4>
+                    <ul className="space-y-2 text-xs font-medium text-gray-700">
+                      {CATEGORIES.map(cat => (
+                        <li 
+                          key={cat}
+                          onClick={() => { setSelectedCategory(cat); setIsSideMenuOpen(false); }}
+                          className="p-2 hover:bg-gray-100 rounded cursor-pointer flex justify-between items-center"
+                        >
+                          <span>{cat}</span>
+                          <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
                         </li>
                       ))}
                     </ul>
                   </div>
                 </div>
-
-                {/* Actions */}
-                <div className="space-y-2 pt-4">
-                  <button 
-                    onClick={() => {
-                      addToCart(selectedProduct);
-                      setSelectedProduct(null);
-                    }}
-                    className="w-full bg-amber-400 hover:bg-amber-500 font-bold py-2.5 rounded-lg transition shadow text-sm"
-                  >
-                    Add to Shopping Cart
-                  </button>
-                  <button 
-                    onClick={() => {
-                      addToCart(selectedProduct);
-                      setSelectedProduct(null);
-                      setIsCartOpen(true);
-                    }}
-                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-lg transition shadow text-sm"
-                  >
-                    Buy Now
-                  </button>
-                </div>
               </div>
             </div>
-          </div>
-        </div>
-      )}
+          )}
 
-      {/* ================= SHOPPING CART DRAWER ================= */}
-      {isCartOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end animate-fade-in">
-          <div className="bg-white w-full max-w-md h-full shadow-2xl flex flex-col justify-between">
+          {/* ================= MAIN PRODUCTS GRID ================= */}
+          <main className="flex-1 max-w-[1500px] w-full mx-auto px-4 py-6">
             
-            {/* Header */}
-            <div className="p-4 bg-[#131921] text-white flex items-center justify-between border-b border-gray-800">
-              <div className="flex items-center gap-2">
-                <ShoppingCart className="w-5 h-5 text-amber-400" />
-                <h3 className="font-bold text-lg">Your Shopping Cart</h3>
+            {/* Header / Filter status */}
+            <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">{selectedCategory}</h1>
+                <p className="text-xs text-gray-500">Showing {filteredProducts.length} curated products on PickWish</p>
               </div>
+
               <button 
-                onClick={() => setIsCartOpen(false)}
-                className="hover:bg-gray-800 p-1 rounded text-gray-300"
+                onClick={() => setOnlyPrime(!onlyPrime)}
+                className={`text-xs px-3 py-1.5 rounded-full border font-bold flex items-center gap-1.5 transition ${
+                  onlyPrime ? 'bg-cyan-100 border-cyan-500 text-cyan-800' : 'bg-gray-50 border-gray-300 text-gray-700'
+                }`}
               >
-                <X className="w-5 h-5" />
+                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-600"></i> Express Prime Only
               </button>
             </div>
 
-            {/* Cart Items List */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {cart.length === 0 ? (
-                <div className="text-center py-16">
-                  <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500 font-medium text-sm">Your Amazon Cart is empty.</p>
-                  <button 
-                    onClick={() => setIsCartOpen(false)}
-                    className="mt-4 bg-amber-400 text-gray-900 font-bold text-xs px-4 py-2 rounded-lg"
-                  >
-                    Continue Shopping
-                  </button>
-                </div>
-              ) : (
-                cart.map(item => (
-                  <div key={item.id} className="flex gap-3 pb-4 border-b border-gray-100 items-center">
+            {/* Product Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProducts.map(product => (
+                <div key={product.id} className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col justify-between hover:shadow-xl transition group">
+                  <div>
+                    {product.badge && (
+                      <span className="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wide">
+                        {product.badge}
+                      </span>
+                    )}
+
                     <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      className="w-16 h-16 object-contain bg-gray-50 rounded p-1 border border-gray-100" 
+                      src={product.image} 
+                      alt={product.title} 
+                      className="w-full h-48 object-contain my-3 group-hover:scale-105 transition duration-200" 
                     />
-                    <div className="flex-1">
-                      <h4 className="text-xs font-semibold text-gray-800 line-clamp-1">{item.title}</h4>
-                      <div className="text-sm font-bold text-gray-900 mt-1">${item.price.toFixed(2)}</div>
-                      
-                      {/* Controls */}
-                      <div className="flex items-center gap-3 mt-2">
-                        <div className="flex items-center border border-gray-300 rounded bg-gray-50">
-                          <button 
-                            onClick={() => updateQuantity(item.id, -1)}
-                            className="p-1 hover:bg-gray-200 text-gray-600"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="px-2 text-xs font-bold text-gray-800">{item.quantity}</span>
-                          <button 
-                            onClick={() => updateQuantity(item.id, 1)}
-                            className="p-1 hover:bg-gray-200 text-gray-600"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
+
+                    <h3 className="font-bold text-sm text-gray-900 line-clamp-2 leading-snug">{product.title}</h3>
+                    
+                    <div className="flex items-center gap-1 mt-2 text-amber-400">
+                      <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                      <span className="text-xs font-bold text-gray-700 ml-1">{product.rating}</span>
+                      <span className="text-xs text-cyan-700 ml-1">({product.reviewsCount})</span>
+                    </div>
+
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-gray-900">${product.price.toFixed(2)}</span>
+                      {product.originalPrice && (
+                        <span className="text-xs text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="mt-4 flex gap-2 pt-2 border-t border-gray-100">
+                    <button 
+                      onClick={() => addToCart(product)}
+                      className="flex-1 bg-amber-400 hover:bg-amber-500 font-bold text-xs py-2 rounded-lg transition shadow-sm text-gray-900"
+                    >
+                      Add to Cart
+                    </button>
+
+                    <button 
+                      onClick={() => toggleWishlist(product)}
+                      className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600 transition"
+                    >
+                      <i data-lucide="heart" class={`w-4 h-4 ${wishlist.some(w => w.id === product.id) ? 'fill-red-500 text-red-500' : ''}`}></i>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </main>
+
+          {/* ================= CART DRAWER ================= */}
+          {isCartOpen && (
+            <div className="fixed inset-0 z-50 bg-black/60 flex justify-end animate-fade-in">
+              <div className="bg-white w-full max-w-md h-full flex flex-col justify-between p-6 shadow-2xl">
+                <div>
+                  <div className="flex justify-between items-center pb-4 border-b">
+                    <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                      <i data-lucide="shopping-cart" class="w-5 h-5 text-amber-500"></i> Shopping Cart ({cartCount})
+                    </h3>
+                    <button onClick={() => setIsCartOpen(false)} className="p-1 hover:bg-gray-100 rounded-full text-gray-500">
+                      <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+
+                  {cart.length === 0 ? (
+                    <div className="text-center py-12 text-gray-500">
+                      <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto text-gray-300 mb-2"></i>
+                      <p className="text-sm font-semibold">Your PickWish cart is empty.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 my-4 max-h-[60vh] overflow-y-auto pr-1">
+                      {cart.map(item => (
+                        <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-100 items-center">
+                          <img src={item.image} alt={item.title} className="w-14 h-14 object-contain rounded border" />
+                          <div className="flex-1 text-xs">
+                            <h4 className="font-bold text-gray-900 line-clamp-1">{item.title}</h4>
+                            <div className="font-extrabold text-amber-600 mt-0.5">${item.price.toFixed(2)}</div>
+                            
+                            <div className="flex items-center gap-2 mt-2">
+                              <button onClick={() => updateQuantity(item.id, -1)} className="w-5 h-5 bg-gray-200 rounded font-bold text-xs">-</button>
+                              <span className="font-bold">{item.quantity}</span>
+                              <button onClick={() => updateQuantity(item.id, 1)} className="w-5 h-5 bg-gray-200 rounded font-bold text-xs">+</button>
+                            </div>
+                          </div>
                         </div>
-
-                        <button 
-                          onClick={() => removeFromCart(item.id)}
-                          className="text-xs text-red-600 hover:underline flex items-center gap-1 font-medium"
-                        >
-                          <Trash2 className="w-3 h-3" /> Remove
-                        </button>
-                      </div>
+                      ))}
                     </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Footer Summary */}
-            {cart.length > 0 && (
-              <div className="p-4 border-t border-gray-200 bg-gray-50 space-y-3">
-                <div className="space-y-1.5 text-xs">
-                  <div className="flex justify-between text-gray-600">
-                    <span>Subtotal</span>
-                    <span className="font-semibold text-gray-900">${cartSubtotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Est. Tax (8%)</span>
-                    <span className="font-semibold text-gray-900">${estimatedTax.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-gray-600">
-                    <span>Shipping</span>
-                    <span className="font-semibold text-green-600">{isFreeShipping ? 'FREE' : '$5.99'}</span>
-                  </div>
-                  <div className="flex justify-between text-sm font-bold text-gray-900 pt-2 border-t border-gray-200">
-                    <span>Total Order:</span>
-                    <span>${(cartSubtotal + estimatedTax + (isFreeShipping ? 0 : 5.99)).toFixed(2)}</span>
-                  </div>
+                  )}
                 </div>
 
-                <button 
-                  onClick={handleProceedToCheckout}
-                  className="w-full bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold py-3 rounded-xl shadow transition text-sm flex items-center justify-center gap-2"
-                >
-                  Proceed to Checkout ({cartTotalCount} items)
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                <div className="border-t border-gray-200 pt-4">
+                  <div className="flex justify-between items-center font-black text-lg mb-4 text-gray-900">
+                    <span>Subtotal:</span>
+                    <span className="text-amber-600">${cartTotal.toFixed(2)}</span>
+                  </div>
 
-      {/* ================= MULTI-STEP CHECKOUT MODAL ================= */}
-      {isCheckoutOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 md:p-8 shadow-2xl relative">
-            
-            {/* Header Steps */}
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
-              <h3 className="font-bold text-xl text-gray-900">Checkout</h3>
-              <div className="flex items-center gap-2 text-xs font-semibold">
-                <span className={`px-2.5 py-1 rounded-full ${checkoutStep === 1 ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-500'}`}>1. Shipping</span>
-                <span className={`px-2.5 py-1 rounded-full ${checkoutStep === 2 ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-500'}`}>2. Payment</span>
-                <span className={`px-2.5 py-1 rounded-full ${checkoutStep === 3 ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-500'}`}>3. Done</span>
+                  <button 
+                    disabled={cart.length === 0}
+                    onClick={() => {
+                      alert(`Thank you for shopping on PickWish! Your order of $${cartTotal.toFixed(2)} is placed.`);
+                      setCart([]);
+                      setIsCartOpen(false);
+                    }}
+                    className="w-full bg-amber-400 hover:bg-amber-500 disabled:bg-gray-300 text-gray-900 font-extrabold py-3 rounded-xl transition shadow-md"
+                  >
+                    Proceed to Checkout
+                  </button>
+                </div>
               </div>
             </div>
+          )}
 
-            {/* STEP 1: SHIPPING ADDRESS */}
-            {checkoutStep === 1 && (
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm text-gray-800 flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-amber-500" /> Enter Shipping Address
-                </h4>
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">First Name</label>
-                    <input type="text" defaultValue="John" className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-amber-500 outline-none" />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">Last Name</label>
-                    <input type="text" defaultValue="Doe" className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-amber-500 outline-none" />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block font-semibold text-gray-700 mb-1">Street Address</label>
-                    <input type="text" defaultValue="742 Evergreen Terrace" className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-amber-500 outline-none" />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">City</label>
-                    <input type="text" defaultValue="Springfield" className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-amber-500 outline-none" />
-                  </div>
-                  <div>
-                    <label className="block font-semibold text-gray-700 mb-1">ZIP Code</label>
-                    <input type="text" defaultValue="97477" className="w-full border border-gray-300 p-2 rounded focus:ring-1 focus:ring-amber-500 outline-none" />
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-between">
-                  <button onClick={() => setIsCheckoutOpen(false)} className="text-xs font-semibold text-gray-500 hover:underline">
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={() => setCheckoutStep(2)}
-                    className="bg-amber-400 hover:bg-amber-500 font-bold text-xs text-gray-900 px-6 py-2.5 rounded-lg"
-                  >
-                    Continue to Payment
-                  </button>
-                </div>
+          {/* FOOTER */}
+          <footer className="bg-[#131921] text-gray-400 text-xs py-8 text-center border-t border-gray-800 mt-12">
+            <div className="max-w-md mx-auto space-y-2">
+              <div className="text-xl font-black text-white">
+                Pick<span className="text-amber-400">Wish</span>
               </div>
-            )}
+              <p>© 2026 PickWish Inc. All rights reserved.</p>
+            </div>
+          </footer>
 
-            {/* STEP 2: PAYMENT METHOD */}
-            {checkoutStep === 2 && (
-              <div className="space-y-4">
-                <h4 className="font-bold text-sm text-gray-800 flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-amber-500" /> Payment Details
-                </h4>
-
-                <div className="border border-amber-200 bg-amber-50/50 p-3 rounded-lg text-xs space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-gray-800">
-                    <input type="radio" defaultChecked name="payment" />
-                    <span>Credit or Debit Card</span>
-                  </div>
-                  <div className="space-y-2 pt-2">
-                    <input type="text" placeholder="Card Number" defaultValue="•••• •••• •••• 4242" className="w-full border border-gray-300 p-2 rounded bg-white text-xs outline-none" />
-                    <div className="grid grid-cols-2 gap-2">
-                      <input type="text" placeholder="MM/YY" defaultValue="12/28" className="border border-gray-300 p-2 rounded bg-white text-xs outline-none" />
-                      <input type="text" placeholder="CVV" defaultValue="123" className="border border-gray-300 p-2 rounded bg-white text-xs outline-none" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-between">
-                  <button onClick={() => setCheckoutStep(1)} className="text-xs font-semibold text-gray-500 hover:underline">
-                    Back
-                  </button>
-                  <button 
-                    onClick={handleCompleteOrder}
-                    className="bg-orange-500 hover:bg-orange-600 font-bold text-xs text-white px-6 py-2.5 rounded-lg shadow"
-                  >
-                    Place Order & Pay
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: ORDER CONFIRMATION */}
-            {checkoutStep === 3 && (
-              <div className="text-center py-6 space-y-4">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
-                  <Check className="w-8 h-8 stroke-[3]" />
-                </div>
-                <h3 className="text-2xl font-black text-gray-900">PickWish Order Confirmed!</h3>
-                <p className="text-xs text-gray-600">
-                  Thank you for shopping on <span className="font-bold text-amber-600">PickWish</span>! Your order <span className="font-bold text-gray-800">#PW-984210-US</span> has been placed successfully.
-                </p>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-xs text-left space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Estimated Delivery:</span>
-                    <span className="font-bold text-green-700">Tomorrow by 8 PM</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Carrier:</span>
-                    <span className="font-semibold text-gray-800">PickWish Express Delivery</span>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={() => setIsCheckoutOpen(false)}
-                  className="bg-amber-400 hover:bg-amber-500 text-gray-900 font-bold text-xs px-6 py-2.5 rounded-lg transition"
-                >
-                  Return to Shopping
-                </button>
-              </div>
-            )}
-
-          </div>
         </div>
-      )}
+      );
+    }
 
-      {/* ================= FOOTER ================= */}
-      <footer className="bg-[#131921] text-white mt-auto border-t border-gray-800">
-        <button 
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          className="w-full bg-[#232f3e] hover:bg-gray-700 text-xs text-gray-200 py-3 font-semibold transition"
-        >
-          Back to top
-        </button>
-
-        <div className="max-w-[1200px] mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-xs text-gray-300">
-          <div>
-            <h4 className="font-bold text-white mb-3">Get to Know PickWish</h4>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">About PickWish</li>
-              <li className="hover:underline cursor-pointer">Careers at PickWish</li>
-              <li className="hover:underline cursor-pointer">Press Center</li>
-              <li className="hover:underline cursor-pointer">PickWish Cares</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-3">Sell on PickWish</h4>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">Sell products on PickWish</li>
-              <li className="hover:underline cursor-pointer">Become a PickWish Affiliate</li>
-              <li className="hover:underline cursor-pointer">Advertise Your Products</li>
-              <li className="hover:underline cursor-pointer">Publish with PickWish</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-3">PickWish Payment Methods</h4>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">PickWish Rewards Card</li>
-              <li className="hover:underline cursor-pointer">Shop with Points</li>
-              <li className="hover:underline cursor-pointer">Reload Wish Balance</li>
-              <li className="hover:underline cursor-pointer">Currency Converter</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-white mb-3">PickWish Support</h4>
-            <ul className="space-y-2">
-              <li className="hover:underline cursor-pointer">PickWish & Security</li>
-              <li className="hover:underline cursor-pointer">Your Account</li>
-              <li className="hover:underline cursor-pointer">Track Your Orders</li>
-              <li className="hover:underline cursor-pointer">Shipping Rates & Policies</li>
-              <li className="hover:underline cursor-pointer">Help & Contact Us</li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="border-t border-gray-800 py-6 text-center text-xs text-gray-500">
-          <p>© 2026 PickWish Inc. All rights reserved. Your one-stop shop for everything you wish for.</p>
-        </div>
-      </footer>
-    </div>
-  );
-}
+    // Mount React App to DOM
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<PickWishApp />);
+  </script>
+</body>
+</html>
