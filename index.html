@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PickWise – Best Product Picks</title>
+<style>
+:root{--bg:#fafaf7;--surface:#fff;--text:#1c1c1a;--muted:#6b6b66;--line:#e6e4dc;--accent:#0f766e;--accent-text:#fff;--badge:#fef3c7;--badge-text:#92400e;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131413;--surface:#1c1d1c;--text:#f1f0ea;--muted:#a3a29a;--line:#2e2f2d;--accent:#2dd4bf;--accent-text:#052e2b;--badge:#3b2f0b;--badge-text:#fcd34d;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131413;--surface:#1c1d1c;--text:#f1f0ea;--muted:#a3a29a;--line:#2e2f2d;--accent:#2dd4bf;--accent-text:#052e2b;--badge:#3b2f0b;--badge-text:#fcd34d;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+header{border-bottom:1px solid var(--line);background:var(--surface)}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em}.logo span{color:var(--accent)}
+.hero{padding:40px 0 24px;text-align:center}
+.hero h1{font-size:clamp(1.8rem,5vw,2.8rem);margin:0 0 10px;letter-spacing:-.03em;line-height:1.15}
+.hero p{color:var(--muted);margin:0 auto 20px;max-width:560px}
+input[type=search],input[type=email]{width:100%;max-width:420px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font-size:1rem}
+.bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 8px}
+.chip{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:7px 14px;border-radius:999px;cursor:pointer;font-size:.9rem}
+.chip.on{background:var(--accent);color:var(--accent-text);border-color:var(--accent)}
+.tools{display:flex;justify-content:space-between;align-items:center;margin:18px 0 12px;color:var(--muted);font-size:.9rem;gap:10px;flex-wrap:wrap}
+select{padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding-bottom:40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.pic{height:130px;display:flex;align-items:center;justify-content:center;font-size:3.6rem;background:var(--bg)}
+.body{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.badge{align-self:flex-start;background:var(--badge);color:var(--badge-text);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:6px}
+.card h3{margin:0;font-size:1rem}
+.card p{margin:0;color:var(--muted);font-size:.88rem;flex:1}
+.meta{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+.btn{display:block;text-align:center;background:var(--accent);color:var(--accent-text);text-decoration:none;font-weight:700;padding:10px;border-radius:10px;margin-top:6px}
+.btn:hover{opacity:.9}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+.news{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center;margin-bottom:40px}
+.news h2{margin:0 0 6px}.news form,.news .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.news button{padding:12px 18px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-text);font-weight:700;cursor:pointer}
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:.82rem;text-align:center}
+.theme{background:none;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer}
+</style>
+</head>
+<body>
+<header><div class="wrap nav"><div class="logo">Pick<span>Wise</span></div><button class="theme" id="theme" aria-label="Toggle theme">◐</button></div></header>
+
+<main class="wrap">
+<section class="hero">
+<h1>Honest picks, handpicked deals</h1>
+<p>We research the best products so you don’t have to. Compare, click, and buy from trusted retailers.</p>
+<input type="search" id="q" placeholder="Search products…" aria-label="Search products">
+<div class="bar" id="cats"></div>
+</section>
+<div class="tools"><span id="count"></span>
+<label>Sort: <select id="sort"><option value="pick">Our picks</option><option value="rating">Top rated</option><option value="name">A–Z</option></select></label></div>
+<div class="grid" id="grid"></div>
+
+<section class="news"><h2>Get weekly deal alerts</h2><p style="color:var(--muted);margin:0">Best offers in your inbox, every Friday.</p>
+<div class="row"><input type="email" id="em" placeholder="you@example.com" aria-label="Email"><button id="sub">Subscribe</button></div>
+<p id="msg" style="margin:10px 0 0;color:var(--accent)"></p></section>
+</main>
+
+<footer><div class="wrap"><strong>Affiliate disclosure:</strong> PickWise earns a commission when you buy through links on this site, at no extra cost to you. Prices and availability are set by the retailer.<br>© 2026 PickWise. All rights reserved.</div></footer>
+
+<script>
+/* ===== EDIT ME: your affiliate settings ===== */
+const AFFILIATE_TAG = "yourtag-21"; // e.g. your Amazon Associates tag
+const buildLink = p => p.url || ("https://www.amazon.in/s?k=" + encodeURIComponent(p.search) + "&tag=" + AFFILIATE_TAG);
+/* Add products here. Use `url` for any custom affiliate link (Flipkart, Impact, etc.) */
+const PRODUCTS = [
+ {name:"Wireless Earbuds Pro",cat:"Audio",emoji:"🎧",rating:4.6,badge:"Top pick",desc:"Active noise cancelling and all-day battery for commutes.",search:"wireless earbuds noise cancelling"},
+ {name:"Smart Fitness Band",cat:"Wearables",emoji:"⌚",rating:4.4,badge:"Best value",desc:"Heart-rate, sleep tracking and a bright AMOLED display.",search:"fitness band amoled"},
+ {name:"Mechanical Keyboard",cat:"Computing",emoji:"⌨️",rating:4.5,desc:"Hot-swappable switches and a compact layout for desk setups.",search:"mechanical keyboard hot swappable"},
+ {name:"Portable Power Bank 20000mAh",cat:"Mobile",emoji:"🔋",rating:4.3,desc:"Fast charging for phones and tablets on the go.",search:"power bank 20000mah fast charging"},
+ {name:"Ergonomic Office Chair",cat:"Home Office",emoji:"🪑",rating:4.2,badge:"Editor’s choice",desc:"Lumbar support for long work-from-home days.",search:"ergonomic office chair"},
+ {name:"4K Action Camera",cat:"Computing",emoji:"📷",rating:4.1,desc:"Waterproof and stabilised, great for travel vlogs.",search:"4k action camera"},
+ {name:"Bluetooth Speaker",cat:"Audio",emoji:"🔊",rating:4.5,desc:"Punchy bass, splash-proof, 12-hour playtime.",search:"bluetooth speaker waterproof"},
+ {name:"LED Desk Lamp",cat:"Home Office",emoji:"💡",rating:4.4,desc:"Adjustable brightness and colour temperature, eye-care design.",search:"led desk lamp"},
+ {name:"Smartwatch with Calling",cat:"Wearables",emoji:"⌚",rating:4.0,desc:"Take calls from your wrist, with 100+ sports modes.",search:"smartwatch bluetooth calling"},
+ {name:"Wireless Mouse",cat:"Computing",emoji:"🖱️",rating:4.6,badge:"Best seller",desc:"Silent clicks and multi-device pairing.",search:"wireless mouse silent"},
+ {name:"Phone Tripod Stand",cat:"Mobile",emoji:"📱",rating:4.3,desc:"Flexible tripod with remote shutter for reels and photos.",search:"phone tripod stand remote"},
+ {name:"Noise Cancelling Headphones",cat:"Audio",emoji:"🎧",rating:4.7,badge:"Top pick",desc:"Over-ear comfort with 40-hour battery life.",search:"over ear noise cancelling headphones"}
+];
+let cat="All";
+const $=id=>document.getElementById(id);
+const cats=["All",...new Set(PRODUCTS.map(p=>p.cat))];
+function drawCats(){$("cats").innerHTML=cats.map(c=>`<button class="chip ${c===cat?"on":""}" data-c="${c}">${c}</button>`).join("")}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function draw(){
+ const q=$("q").value.trim().toLowerCase(),s=$("sort").value;
+ let L=PRODUCTS.filter(p=>(cat==="All"||p.cat===cat)&&(p.name+p.desc+p.cat).toLowerCase().includes(q));
+ if(s==="rating")L.sort((a,b)=>b.rating-a.rating);else if(s==="name")L.sort((a,b)=>a.name.localeCompare(b.name));
+ $("count").textContent=L.length+" product"+(L.length===1?"":"s");
+ $("grid").innerHTML=L.length?L.map(p=>`<article class="card"><div class="pic">${p.emoji}</div><div class="body">${p.badge?`<span class="badge">${esc(p.badge)}</span>`:""}<h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p><div class="meta"><span>${"★".repeat(Math.round(p.rating))} ${p.rating}</span><span>${esc(p.cat)}</span></div><a class="btn" href="${buildLink(p)}" target="_blank" rel="sponsored noopener nofollow">Check price →</a></div></article>`).join(""):'<div class="empty">No products match your search.</div>';
+}
+$("cats").onclick=e=>{const c=e.target.dataset.c;if(c){cat=c;drawCats();draw()}};
+$("q").oninput=draw;$("sort").onchange=draw;
+$("sub").onclick=()=>{const v=$("em").value;$("msg").textContent=/^\S+@\S+\.\S+$/.test(v)?"Thanks for subscribing! (Connect this to your email tool.)":"Please enter a valid email.";};
+$("theme").onclick=()=>{const r=document.documentElement,d=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme:dark)").matches);r.dataset.theme=d?"light":"dark"};
+drawCats();draw();
+</script>
+</body>
+</html>
